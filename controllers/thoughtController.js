@@ -19,6 +19,7 @@ module.exports = {
         })
         .catch((err) => res.status(500).json(err))
     },
+    
     createThought(req, res) {
         Thought.create(req.body)
         .then((thought) => {
@@ -26,20 +27,27 @@ module.exports = {
                 res.status(404).json({message: 'No thought made'})
             }
             else {
-                User.findOneAndUpdate(
-                    {username: req.body.username},
-                    {$push: { thoughts: thoughs._id}},
-                    {new: true}
+            User.findOneAndUpdate(
+            {username: req.body.username},
+            {$push: { thoughts: thoughs._id}},
+            {new: true}
                 )
             }
-            
-        }
-        res.json(thought))
+        })
+        .then((user) => {
+            if(!user){
+                res.status(404).json(
+                    {message: 'Error making thought'}
+                )
+            }
+            else {
+                res.json('Thought created!')
+            }
+        })
         .catch((err) => {
-        console.log(err)
-        res.status(500).json(err)
-    })
-    },
+            res.status(500).json(err)
+        })
+        },
 
     //delete thought and updates user profile
     deleteThought(req, res) {
@@ -55,7 +63,6 @@ module.exports = {
                 { new: true } 
             )
           }
-            res.json({ message: 'Thought deleted!'})
         })
         .then((user) => {
             if(!user){
@@ -70,6 +77,7 @@ module.exports = {
             res.status(500).json(err)
         })
     },
+
     updateThought(req, res) {
         Thought.updateOne(
             {_id: req.params.thoughtID},

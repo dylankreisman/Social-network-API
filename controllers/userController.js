@@ -68,7 +68,29 @@ module.exports = {
         .catch((err) => res.status(500).json(err))
     },
    deleteFriend(req, res) {
-    User.deleteOne({_id: req.params.friendsID})
-    .then((user) => )
+    User.findOneAndDelete({_id: req.params.friendsID})
+    .then((user) => {
+        if(!user){
+            res.status(404).json({message: 'Could not delete user'})
+        }
+        else{
+            User.findOneAndUpdate(
+                { thoughts: req.params.friendsID},
+                {$pull: {friends: req.params:friendsID}},
+                { new: true }
+            )
+        }
+    })
+    .then((user) => {
+        if(!user){
+            res.status(404).json({ message: 'Friend deleted, but not updated with the user'})
+        }
+        else{
+            res.json({message: 'Friend successfully deleted!'})
+        }
+    })
+    .catch((err) => {
+        res.status(500).json(err)
+    })
    }     
 }
