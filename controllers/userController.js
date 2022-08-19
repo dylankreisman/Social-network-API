@@ -1,5 +1,4 @@
 
-
 const { User, Thought } = require('../models')
 
 module.exports = {
@@ -51,9 +50,10 @@ module.exports = {
           }
         })
     },
+
     addFriend(req, res) {
         User.findOneAndUpdate(
-            {_id: req.params.id},
+            {_id: req.params.userID},
             {$addToSet: { friends: req.params.friendsID}},
             { runValidators: true, new: true }
         )
@@ -67,25 +67,26 @@ module.exports = {
         })
         .catch((err) => res.status(500).json(err))
     },
+
    deleteFriend(req, res) {
-    User.findOneAndDelete({_id: req.params.friendsID})
+    User.findOneAndDelete({_id: req.params.userID})
     .then((user) => {
-        if(!user){
+        if (!user){
             res.status(404).json({message: 'Could not delete user'})
         }
-        else{
+        else {
             User.findOneAndUpdate(
-                { thoughts: req.params.friendsID},
-                {$pull: {friends: req.params:friendsID}},
+                { friends: req.params.userID},
+                {$pull: {friends: req.params.friendsID}},
                 { new: true }
             )
         }
     })
     .then((user) => {
-        if(!user){
+        if (!user) {
             res.status(404).json({ message: 'Friend deleted, but not updated with the user'})
         }
-        else{
+        else {
             res.json({message: 'Friend successfully deleted!'})
         }
     })

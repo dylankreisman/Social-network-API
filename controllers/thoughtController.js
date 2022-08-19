@@ -27,9 +27,9 @@ module.exports = {
                 res.status(404).json({message: 'No thought made'})
             }
             else {
-            User.findOneAndUpdate(
-            {username: req.body.username},
-            {$push: { thoughts: thoughs._id}},
+           return User.findOneAndUpdate(
+            {_id: req.body._id},
+            {$push: { thoughts: thoughts._id}},
             {new: true}
                 )
             }
